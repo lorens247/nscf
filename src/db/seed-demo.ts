@@ -156,13 +156,32 @@ export async function seedDemo(db: SeedTransaction) {
 
   // Positions
   const posData = [
-    { name: "President", category: "Executive" },
-    { name: "Vice President", category: "Executive" },
-    { name: "General Secretary", category: "Executive" },
-    { name: "Faculty Representative", category: "Faculty" },
-    { name: "Department Representative", category: "Department" },
+    { name: "Study Centre SCF Chairman", category: "Executive and Administrative" },
+    { name: "Vice Chairman", category: "Executive and Administrative" },
+    { name: "General Secretary", category: "Executive and Administrative" },
+    { name: "Financial Secretary", category: "Executive and Administrative" },
+    { name: "Public Relations Officer (PRO)", category: "Executive and Administrative" },
+    { name: "Postgraduate Students Representative", category: "Executive and Administrative" },
+    { name: "Welfare Officer", category: "Executive and Administrative" },
+    { name: "Special Needs & Inclusion Officer", category: "Executive and Administrative" },
+    { name: "Academic Affairs / E-Learning Coordinator", category: "Executive and Administrative" },
+    { name: "Auditor", category: "Executive and Administrative" },
+    { name: "Treasurer", category: "Executive and Administrative" },
+    { name: "Assistant General Secretary", category: "Executive and Administrative" },
+    { name: "Chief Whip", category: "Executive and Administrative" },
+    { name: "Social & Cultural Coordinator", category: "Executive and Administrative" },
+    { name: "Sports & Recreation Coordinator", category: "Executive and Administrative" },
+    { name: "Faculty of Agricultural Sciences Representative", category: "Faculty" },
+    { name: "Faculty of Arts Representative", category: "Faculty" },
+    { name: "Faculty of Computing Representative", category: "Faculty" },
+    { name: "Faculty of Education Representative", category: "Faculty" },
+    { name: "Faculty of Health Sciences Representative", category: "Faculty" },
+    { name: "Faculty of Management Sciences Representative", category: "Faculty" },
+    { name: "Faculty of Science Representative", category: "Faculty" },
+    { name: "Faculty of Social Sciences Representative", category: "Faculty" },
+    { name: "Master's Students Special Adviser to the Chairman", category: "Special Advisory" },
   ];
-  const insertedPositions = [];
+  const insertedPositions: Array<typeof positions.$inferSelect> = [];
   for (const item of posData) {
     insertedPositions.push(await ensureRecord(
       () => db.select().from(positions).where(and(eq(positions.institutionId, inst.id), eq(positions.name, item.name))).orderBy(positions.id).limit(1),
@@ -170,6 +189,30 @@ export async function seedDemo(db: SeedTransaction) {
     ));
   }
   console.log("Positions:", insertedPositions.length);
+
+  const getPositionId = (name: string) => {
+    const position = insertedPositions.find((candidate) => candidate.name === name);
+    if (!position) throw new Error(`Position ${name} is missing from the seed data.`);
+    return position.id;
+  };
+  const legacyPositionReplacements = [
+    { legacy: "President", replacement: "Study Centre SCF Chairman" },
+    { legacy: "Vice President", replacement: "Vice Chairman" },
+    { legacy: "Faculty Representative", replacement: "Faculty of Management Sciences Representative" },
+    { legacy: "Department Representative", replacement: "Faculty of Management Sciences Representative" },
+  ];
+  for (const { legacy, replacement } of legacyPositionReplacements) {
+    const legacyPosition = await db.select({ id: positions.id }).from(positions)
+      .where(and(eq(positions.institutionId, inst.id), eq(positions.name, legacy)))
+      .orderBy(positions.id)
+      .limit(1);
+    if (legacyPosition[0]) {
+      await db.update(representatives)
+        .set({ positionId: getPositionId(replacement) })
+        .where(eq(representatives.positionId, legacyPosition[0].id));
+      await db.delete(positions).where(eq(positions.id, legacyPosition[0].id));
+    }
+  }
 
   // Admin user
   await db.insert(users).values({
