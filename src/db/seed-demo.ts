@@ -39,13 +39,17 @@ export async function seedDemo(db: SeedTransaction) {
 
   // Create faculties
   const facultyData = [
+    { name: "Faculty of Agricultural Sciences", code: "FAS" },
     { name: "Faculty of Arts", code: "FOA" },
-    { name: "Faculty of Social Sciences", code: "FSS" },
-    { name: "Faculty of Management Sciences", code: "FMS" },
+    { name: "Faculty of Computing", code: "FCO" },
     { name: "Faculty of Education", code: "FED" },
     { name: "Faculty of Health Sciences", code: "FHS" },
+    { name: "Faculty of Law", code: "FOL" },
+    { name: "Faculty of Management Sciences", code: "FMS" },
+    { name: "Faculty of Sciences", code: "FOS" },
+    { name: "Faculty of Social Sciences", code: "FSS" },
   ];
-  const insertedFaculties = [];
+  const insertedFaculties: Array<typeof faculties.$inferSelect> = [];
   for (const item of facultyData) {
     insertedFaculties.push(await ensureRecord(
       () => db.select().from(faculties).where(and(eq(faculties.institutionId, inst.id), eq(faculties.code, item.code))).orderBy(faculties.id).limit(1),
@@ -54,21 +58,84 @@ export async function seedDemo(db: SeedTransaction) {
   }
   console.log("Faculties:", insertedFaculties.length);
 
-  // Create departments (under first faculty for demo)
+  // Create departments
   const deptData = [
-    { name: "Department of English", code: "ENG", facultyId: insertedFaculties[0].id },
-    { name: "Department of History", code: "HIS", facultyId: insertedFaculties[0].id },
-    { name: "Department of Mass Communication", code: "MCM", facultyId: insertedFaculties[1].id },
-    { name: "Department of Accounting", code: "ACC", facultyId: insertedFaculties[2].id },
+    { name: "Agricultural Economics and Extension", code: "AEE", facultyCode: "FAS" },
+    { name: "Animal Science and Fisheries", code: "ASF", facultyCode: "FAS" },
+    { name: "Crop and Soil Science", code: "CSS", facultyCode: "FAS" },
+    { name: "English", code: "ENG", facultyCode: "FOA" },
+    { name: "Linguistics, Foreign and Nigerian Languages", code: "LFNL", facultyCode: "FOA" },
+    { name: "Philosophy", code: "PHI", facultyCode: "FOA" },
+    { name: "Religious Studies", code: "REL", facultyCode: "FOA" },
+    { name: "Computer Science", code: "CSC", facultyCode: "FCO" },
+    { name: "Information Systems and Technology", code: "IST", facultyCode: "FCO" },
+    { name: "Cyber Security", code: "CYB", facultyCode: "FCO" },
+    { name: "Arts and Social Sciences Education", code: "ASSE", facultyCode: "FED" },
+    { name: "Educational Foundations", code: "EDF", facultyCode: "FED" },
+    { name: "Human Kinetics and Health Education", code: "HKHE", facultyCode: "FED" },
+    { name: "Library and Information Science", code: "LIS", facultyCode: "FED" },
+    { name: "Science Education", code: "SED", facultyCode: "FED" },
+    { name: "Environmental Health Science", code: "EHS", facultyCode: "FHS" },
+    { name: "Nursing Science", code: "NS", facultyCode: "FHS" },
+    { name: "Public Health Science", code: "PHS", facultyCode: "FHS" },
+    { name: "Commercial Law", code: "CL", facultyCode: "FOL" },
+    { name: "Jurisprudence and International Law", code: "JIL", facultyCode: "FOL" },
+    { name: "Private and Property Law", code: "PPL", facultyCode: "FOL" },
+    { name: "Public Law", code: "PL", facultyCode: "FOL" },
+    { name: "Business Administration", code: "BA", facultyCode: "FMS" },
+    { name: "Entrepreneurial Studies and Cooperatives Management", code: "ESCM", facultyCode: "FMS" },
+    { name: "Financial Studies", code: "FS", facultyCode: "FMS" },
+    { name: "Public Administration", code: "PA", facultyCode: "FMS" },
+    { name: "Hospitality and Tourism Management", code: "HTM", facultyCode: "FMS" },
+    { name: "CEMBA/CEMPA (Commonwealth Executive MBA and MPA programmes)", code: "CEMBA-CEMPA", facultyCode: "FMS" },
+    { name: "Biological Science", code: "BIO", facultyCode: "FOS" },
+    { name: "Chemistry", code: "CHE", facultyCode: "FOS" },
+    { name: "Environmental Science", code: "ENV", facultyCode: "FOS" },
+    { name: "Mathematics", code: "MAT", facultyCode: "FOS" },
+    { name: "Physics", code: "PHY", facultyCode: "FOS" },
+    { name: "Criminology and Security Studies", code: "CSSS", facultyCode: "FSS" },
+    { name: "Development Studies", code: "DEV", facultyCode: "FSS" },
+    { name: "Economics", code: "ECO", facultyCode: "FSS" },
+    { name: "Mass Communication", code: "MCM", facultyCode: "FSS" },
+    { name: "Peace Studies and Conflict Resolution", code: "PSCR", facultyCode: "FSS" },
+    { name: "Political Science", code: "POL", facultyCode: "FSS" },
+    { name: "Tourism Studies", code: "TS", facultyCode: "FSS" },
+    { name: "Department of History", code: "HIS", facultyCode: "FOA" },
+    { name: "Department of Accounting", code: "ACC", facultyCode: "FMS" },
   ];
-  const insertedDepts = [];
+  const insertedDepts: Array<typeof departments.$inferSelect> = [];
   for (const item of deptData) {
+    const { facultyCode, ...department } = item;
+    const faculty = insertedFaculties.find((candidate) => candidate.code === facultyCode);
+    if (!faculty) throw new Error(`Faculty ${facultyCode} is missing from the seed data.`);
+    const existingDepartment = await db.select().from(departments)
+      .where(and(eq(departments.institutionId, inst.id), eq(departments.code, department.code)))
+      .orderBy(departments.id)
+      .limit(1);
+    if (existingDepartment[0] && existingDepartment[0].facultyId !== faculty.id) {
+      const [updatedDepartment] = await db.update(departments)
+        .set({ facultyId: faculty.id })
+        .where(eq(departments.id, existingDepartment[0].id))
+        .returning();
+      insertedDepts.push(updatedDepartment);
+      continue;
+    }
     insertedDepts.push(await ensureRecord(
-      () => db.select().from(departments).where(and(eq(departments.institutionId, inst.id), eq(departments.code, item.code))).orderBy(departments.id).limit(1),
-      () => db.insert(departments).values({ ...item, institutionId: inst.id }).returning(),
+      () => db.select().from(departments).where(and(eq(departments.institutionId, inst.id), eq(departments.code, department.code))).orderBy(departments.id).limit(1),
+      () => db.insert(departments).values({ ...department, facultyId: faculty.id, institutionId: inst.id }).returning(),
     ));
   }
   console.log("Departments:", insertedDepts.length);
+  const getFacultyId = (code: string) => {
+    const faculty = insertedFaculties.find((candidate) => candidate.code === code);
+    if (!faculty) throw new Error(`Faculty ${code} is missing from the seed data.`);
+    return faculty.id;
+  };
+  const getDepartmentId = (code: string) => {
+    const department = insertedDepts.find((candidate) => candidate.code === code);
+    if (!department) throw new Error(`Department ${code} is missing from the seed data.`);
+    return department.id;
+  };
 
   // Programmes
   const progData = [
@@ -122,10 +189,10 @@ export async function seedDemo(db: SeedTransaction) {
       email: "chidi.o@noun.edu.ng",
       phone: "+234 801 234 5678",
       positionId: insertedPositions[0].id,
-      departmentId: insertedDepts[0].id,
+      departmentId: getDepartmentId("ENG"),
       programmeId: insertedProgs[1].id,
       studyCentreId: null,
-      facultyId: insertedFaculties[0].id,
+      facultyId: getFacultyId("FOA"),
       academicSessionId: null,
       stateId: null,
       bio: "Passionate about student welfare and academic excellence.",
@@ -138,10 +205,10 @@ export async function seedDemo(db: SeedTransaction) {
       email: "amina.b@noun.edu.ng",
       phone: "+234 701 987 6543",
       positionId: insertedPositions[3].id,
-      departmentId: insertedDepts[2].id,
+      departmentId: getDepartmentId("MCM"),
       programmeId: insertedProgs[0].id,
       studyCentreId: null,
-      facultyId: insertedFaculties[1].id,
+      facultyId: getFacultyId("FSS"),
       academicSessionId: null,
       stateId: null,
       bio: "Advocating for inclusive education and campus resources.",
@@ -154,10 +221,10 @@ export async function seedDemo(db: SeedTransaction) {
       email: "emeka.n@noun.edu.ng",
       phone: "+234 802 345 6789",
       positionId: insertedPositions[4].id,
-      departmentId: insertedDepts[3].id,
+      departmentId: getDepartmentId("ACC"),
       programmeId: insertedProgs[0].id,
       studyCentreId: null,
-      facultyId: insertedFaculties[2].id,
+      facultyId: getFacultyId("FMS"),
       academicSessionId: null,
       stateId: null,
       bio: "Focused on student engagement and professional development.",
