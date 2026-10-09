@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { academicSessions, auditLogs, faculties, representatives, users } from "@/db/schema";
 import { requireRole, canWrite } from "@/lib/auth-guard";
 import { PageHeading, Notice, buttonPrimary, Card } from "@/components/ui";
+import InvitationGenerator from "@/components/invitation-generator";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
   const tasks = canWrite(user.role)
     ? [
         { label: "Add a representative", href: "/admin/representatives/new" },
+        { label: "Generate rep access codes", href: "/admin/invitations" },
         { label: "Import from CSV", href: "/admin/import" },
         { label: "Manage the catalog", href: "/admin/catalog" },
         { label: "Export all records", href: "/api/export" },
@@ -66,6 +68,17 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
       />
 
       {sp.forbidden && <Notice tone="error">Your role does not have access to that page.</Notice>}
+
+      {canWrite(user.role) && (
+        <section aria-labelledby="rep-access-heading" className="space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="rep-access-heading" className="text-lg font-bold text-ink">Rep access code generator</h2>
+            <Link href="/admin/invitations" className="inline-flex min-h-11 items-center text-sm font-semibold text-brand hover:underline">Manage codes</Link>
+          </div>
+          <p className="text-sm text-muted">Generate a single-use code and share it with a representative so they can add their details and photo. Each code expires after seven days.</p>
+          <InvitationGenerator />
+        </section>
+      )}
 
       <dl className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
         {stats.map((s) => (

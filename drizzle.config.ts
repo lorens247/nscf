@@ -15,6 +15,6 @@ export default defineConfig({
   tablesFilter: [
     "institution", "state", "faculty", "department", "programme",
     "study_centre", "academic_session", "position", "user",
-    "representative", "audit_log", "privacy_setting",
+    "representative", "audit_log", "privacy_setting", "representative_invite", "representative_photo",
   ],
 });

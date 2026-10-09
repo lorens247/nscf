@@ -11,9 +11,10 @@ import { faculties, positions, representatives } from "@/db/schema";
 
 export const dynamic = "force-dynamic";
 
-/** Public base URL: NEXT_PUBLIC_SITE_URL in production, otherwise the request host. */
+/** Public base URL: SITE_URL in production, otherwise the request host. */
 async function baseUrl() {
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+  const configuredUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
+  if (configuredUrl) return configuredUrl.replace(/\/$/, "");
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
   // Reverse proxies often report their internal hop as http. Public non-local hosts should be shared as https.

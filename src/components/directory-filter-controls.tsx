@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useId, useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import type { Option } from "@/lib/lookups";
+import type { DepartmentOption, Option } from "@/lib/lookups";
+import { useSheetEffects } from "@/components/use-sheet-effects";
+import FacultyDepartmentFields from "@/components/faculty-department-fields";
 import { inputClass } from "@/components/ui";
 
 export type DirectoryFilterValues = {
@@ -19,7 +22,7 @@ export type DirectoryFilterValues = {
 export type DirectoryFilterLookups = {
   sessions: Option[];
   faculties: Option[];
-  departments: Option[];
+  departments: DepartmentOption[];
   studyCentres: Option[];
   states: Option[];
   positions: Option[];
@@ -35,16 +38,7 @@ const SORTS = [
 export default function DirectoryFilterControls({ values, lookups, activeCount }: { values: DirectoryFilterValues; lookups: DirectoryFilterLookups; activeCount: number }) {
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [open]);
+  useSheetEffects(open, setOpen);
 
   return (
     <>
@@ -79,8 +73,7 @@ export default function DirectoryFilterControls({ values, lookups, activeCount }
       <form method="GET" action="/directory" className="mt-5 hidden rounded-[var(--radius-card)] border border-line bg-white p-5 sm:block">
         {values.q && <input type="hidden" name="q" value={values.q} />}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Select name="faculty" label="Faculty" value={values.faculty} options={lookups.faculties} />
-          <Select name="dept" label="Department" value={values.dept} options={lookups.departments} />
+          <FacultyDepartmentFields key={`${values.faculty}:${values.dept}`} faculties={lookups.faculties} departments={lookups.departments} facultyValue={values.faculty === undefined ? "" : String(values.faculty)} departmentValue={values.dept === undefined ? "" : String(values.dept)} facultyName="faculty" departmentName="dept" />
           <Select name="position" label="Position" value={values.position} options={lookups.positions} />
           <Select name="centre" label="Study centre" value={values.centre} options={lookups.studyCentres} />
           <Select name="state" label="State" value={values.state} options={lookups.states} />
@@ -89,7 +82,7 @@ export default function DirectoryFilterControls({ values, lookups, activeCount }
         </div>
         <div className="mt-4 flex items-center gap-3">
           <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-field)] bg-brand px-6 text-sm font-bold text-white hover:bg-brand-hover">Apply filters</button>
-          {(activeCount > 0 || values.q) && <a href="/directory" className="inline-flex min-h-11 items-center px-2 text-sm font-bold text-muted hover:text-accent">Clear all</a>}
+          {(activeCount > 0 || values.q) && <Link href="/directory" className="inline-flex min-h-11 items-center px-2 text-sm font-bold text-muted hover:text-accent">Clear all</Link>}
         </div>
       </form>
 
@@ -111,8 +104,7 @@ export default function DirectoryFilterControls({ values, lookups, activeCount }
             <form method="GET" action="/directory" className="max-h-[calc(88dvh-69px)] overflow-y-auto px-4 pb-safe pt-4">
               {values.q && <input type="hidden" name="q" value={values.q} />}
               <div className="grid gap-3">
-                <Select name="faculty" label="Faculty" value={values.faculty} options={lookups.faculties} />
-                <Select name="dept" label="Department" value={values.dept} options={lookups.departments} />
+                <FacultyDepartmentFields key={`${values.faculty}:${values.dept}`} faculties={lookups.faculties} departments={lookups.departments} facultyValue={values.faculty === undefined ? "" : String(values.faculty)} departmentValue={values.dept === undefined ? "" : String(values.dept)} facultyName="faculty" departmentName="dept" />
                 <Select name="position" label="Position" value={values.position} options={lookups.positions} />
                 <Select name="centre" label="Study centre" value={values.centre} options={lookups.studyCentres} />
                 <Select name="state" label="State" value={values.state} options={lookups.states} />
@@ -121,7 +113,7 @@ export default function DirectoryFilterControls({ values, lookups, activeCount }
               </div>
               <div className="sticky bottom-0 -mx-4 mt-5 flex gap-2 border-t border-line bg-white px-4 py-3 pb-safe">
                 {(activeCount > 0 || values.q) && (
-                  <a href="/directory" className="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-field)] border border-line-strong px-4 text-sm font-bold text-ink">Reset</a>
+                  <Link href="/directory" className="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-field)] border border-line-strong px-4 text-sm font-bold text-ink">Reset</Link>
                 )}
                 <button type="submit" className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--radius-field)] bg-brand px-5 text-sm font-bold text-white">Show results</button>
               </div>
@@ -134,10 +126,11 @@ export default function DirectoryFilterControls({ values, lookups, activeCount }
 }
 
 function Select({ name, label, value, options }: { name: string; label: string; value?: string | number; options: readonly { id: string | number; name: string }[] }) {
+  const id = useId();
   return (
     <div>
-      <label htmlFor={`filter-${name}`} className="block text-[11px] font-bold uppercase tracking-[0.08em] text-muted">{label}</label>
-      <select id={`filter-${name}`} name={name} defaultValue={value === undefined ? "" : String(value)} className={inputClass}>
+      <label htmlFor={id} className="block text-[11px] font-bold uppercase tracking-[0.08em] text-muted">{label}</label>
+      <select id={id} name={name} defaultValue={value === undefined ? "" : String(value)} className={inputClass}>
         <option value="">Any</option>
         {options.map((option) => <option key={option.id} value={option.id}>{option.name}</option>)}
       </select>

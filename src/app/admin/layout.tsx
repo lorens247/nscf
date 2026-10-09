@@ -15,15 +15,20 @@ export const dynamic = "force-dynamic";
 type NavEntry = AdminNavItem & { roles: string[] };
 
 const NAV: NavEntry[] = [
-  { label: "Dashboard", href: "/admin", roles: ["admin", "editor", "viewer"] },
-  { label: "Representatives", href: "/admin/representatives", roles: ["admin", "editor", "viewer"] },
-  { label: "Catalog", href: "/admin/catalog", roles: ["admin", "editor"] },
-  { label: "Import CSV", href: "/admin/import", roles: ["admin", "editor"] },
-  { label: "Export CSV", href: "/api/export", roles: ["admin", "editor", "viewer"] },
-  { label: "Privacy", href: "/admin/privacy", roles: ["admin"] },
-  { label: "Users & roles", href: "/admin/users", roles: ["admin"] },
-  { label: "Audit log", href: "/admin/audit", roles: ["admin"] },
-  { label: "Institution", href: "/admin/settings", roles: ["admin"] },
+  { group: "Overview", label: "Dashboard", href: "/admin", roles: ["admin", "editor", "viewer"] },
+  { group: "Representatives", label: "Representatives", href: "/admin/representatives", roles: ["admin", "editor", "viewer"] },
+  { group: "Representatives", label: "Rep access codes", href: "/admin/invitations", roles: ["admin", "editor"] },
+  { group: "Academic catalog", label: "Faculties", href: "/admin/catalog?tab=faculty", roles: ["admin", "editor"] },
+  { group: "Academic catalog", label: "Departments", href: "/admin/catalog?tab=department", roles: ["admin", "editor"] },
+  { group: "Academic catalog", label: "Degree types", href: "/admin/catalog?tab=programme", roles: ["admin", "editor"] },
+  { group: "Academic catalog", label: "Positions", href: "/admin/catalog?tab=position", roles: ["admin", "editor"] },
+  { group: "Academic catalog", label: "All catalog entries", href: "/admin/catalog", roles: ["admin", "editor"] },
+  { group: "Data tools", label: "Import CSV", href: "/admin/import", roles: ["admin", "editor"] },
+  { group: "Data tools", label: "Export CSV", href: "/api/export", roles: ["admin", "editor", "viewer"] },
+  { group: "Administration", label: "Privacy", href: "/admin/privacy", roles: ["admin"] },
+  { group: "Administration", label: "Users & roles", href: "/admin/users", roles: ["admin"] },
+  { group: "Administration", label: "Audit log", href: "/admin/audit", roles: ["admin"] },
+  { group: "Administration", label: "Institution", href: "/admin/settings", roles: ["admin"] },
 ];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
@@ -32,7 +37,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   const inst = await getInstitution();
   const [account] = await db.select({ name: users.name }).from(users).where(eq(users.id, user.id)).limit(1);
-  const items = NAV.filter((n) => n.roles.includes(user.role)).map(({ label, href }) => ({ label, href }));
+  const items = NAV.filter((n) => n.roles.includes(user.role)).map(({ label, href, group }) => ({ label, href, group }));
   const displayName = account?.name || user.email;
 
   return (
@@ -41,15 +46,15 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         Skip to content
       </a>
 
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line bg-white lg:flex xl:w-64">
-        <div className="flex h-16 items-center gap-2.5 border-b border-line px-5">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-white md:flex xl:w-72">
+        <div className="flex h-24 shrink-0 items-center gap-2.5 border-b border-line px-5">
           <Logo logoUrl={inst.logoUrl} shortName={inst.shortName} size="sm" />
           <div className="min-w-0">
             <p className="truncate text-[13px] font-bold text-ink">{inst.shortName} Admin</p>
             <p className="truncate text-[11px] text-muted">Representatives</p>
           </div>
         </div>
-        <nav aria-label="Admin sections" className="flex-1 overflow-y-auto p-3">
+        <nav aria-label="Admin sections" className="min-h-0 flex-1 overflow-y-auto p-3">
           <AdminNavList items={items} />
           <div className="mt-4 border-t border-line pt-3">
             <Link href="/directory" className="flex min-h-11 items-center rounded-[var(--radius-field)] px-3 text-sm font-semibold text-brand hover:bg-brand-soft">
@@ -57,7 +62,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             </Link>
           </div>
         </nav>
-        <div className="border-t border-line p-3">
+        <div className="shrink-0 border-t border-line bg-white p-3">
           <p className="truncate px-3 pb-2 text-xs text-muted">{displayName}</p>
           <SignOutButton />
         </div>
@@ -69,7 +74,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <AdminMobileNav items={items} identity={displayName} />
             <span className="truncate text-sm font-bold text-ink">{inst.shortName} Administration</span>
           </div>
-          <span className="hidden shrink-0 rounded-full bg-tint px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-muted sm:block">{user.role}</span>
+          <div className="flex shrink-0 items-center gap-3">
+            <span className="hidden rounded-full bg-tint px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-muted sm:block">{user.role}</span>
+            <SignOutButton />
+          </div>
         </header>
         <div id="main" className="mx-auto w-full max-w-5xl flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
       </div>

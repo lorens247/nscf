@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { getInstitution } from "@/lib/institution";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export async function generateMetadata(): Promise<Metadata> {
   const inst = await getInstitution();

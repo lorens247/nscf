@@ -17,7 +17,7 @@ const DEFAULTS: InstitutionInfo = {
   shortName: "NOUN",
   motto: "Learn at any place at your pace.",
   directoryTitle: "NOUN Student Representatives Directory",
-  logoUrl: null,
+  logoUrl: "/logo.png",
 };
 
 /** Institution identity is read from the database so it can be changed from Admin → Settings. */

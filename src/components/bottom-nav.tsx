@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Home, Search, ShieldCheck } from "lucide-react";
+import { CalendarDays, Home, Search, UserPlus } from "lucide-react";
 
 const ITEMS = [
   { href: "/", label: "Home", icon: Home, exact: true },
   { href: "/directory", label: "Find", icon: Search, exact: false },
   { href: "/sessions", label: "Sessions", icon: CalendarDays, exact: false },
-  { href: "/admin", label: "Admin", icon: ShieldCheck, exact: false },
+  { href: "/representatives/join", label: "Register", icon: UserPlus, exact: false },
 ];
 
 /**

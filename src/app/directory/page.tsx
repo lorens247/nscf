@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { academicSessions, departments, faculties, positions, representatives, states, studyCentres } from "@/db/schema";
 import { getLookups } from "@/lib/lookups";
 import { getPrivacy } from "@/lib/privacy";
-import { Chip, ChipRow, EmptyState, Initials } from "@/components/ui";
+import { Chip, ChipRow, EmptyState, RepresentativeAvatar } from "@/components/ui";
 import DirectoryFilterControls from "@/components/directory-filter-controls";
 
 export const dynamic = "force-dynamic";
@@ -89,6 +89,7 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Pr
     .select({
       id: representatives.id,
       name: representatives.name,
+      imageUrl: representatives.imageUrl,
       email: representatives.email,
       positionName: positions.name,
       facultyName: faculties.name,
@@ -191,7 +192,7 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Pr
                   href={`/directory/${rep.id}`}
                   className="flex h-full items-start gap-3.5 rounded-[var(--radius-card)] border border-line bg-white p-4 transition-colors hover:border-brand hover:bg-brand-soft"
                 >
-                  <Initials name={rep.name} />
+                  <RepresentativeAvatar name={rep.name} imageUrl={rep.imageUrl} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-bold text-ink">{rep.name}</p>
                     <p className="truncate text-sm font-semibold text-brand">{rep.positionName ?? "Student representative"}</p>

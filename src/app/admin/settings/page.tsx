@@ -29,7 +29,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
             <Logo logoUrl={inst.logoUrl} shortName={inst.shortName} size="lg" />
           </div>
           <p className="mt-3 text-xs text-muted">
-            {inst.logoUrl ? "Showing the logo from the URL below." : "No logo set. A text placeholder is shown until an official logo URL is added."}
+            {inst.logoUrl ? "Showing the logo from the URL below." : "Using the supplied forum logo. Add a URL below to use a different logo."}
           </p>
         </section>
 

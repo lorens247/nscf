@@ -5,7 +5,7 @@ import SiteLayout from "@/components/site-layout";
 import { db } from "@/db";
 import { academicSessions, departments, faculties, positions, representatives } from "@/db/schema";
 import { getInstitution } from "@/lib/institution";
-import { Chip, ChipRow, EmptyState, Initials, SectionHeading, buttonSecondary } from "@/components/ui";
+import { Chip, ChipRow, EmptyState, RepresentativeAvatar, SectionHeading, buttonSecondary } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +31,7 @@ export default async function HomePage() {
       .select({
         id: representatives.id,
         name: representatives.name,
+      imageUrl: representatives.imageUrl,
         positionName: positions.name,
         departmentName: departments.name,
         facultyName: faculties.name,
@@ -146,7 +147,7 @@ export default async function HomePage() {
                     href={`/directory/${rep.id}`}
                     className="flex items-center gap-4 rounded-[var(--radius-card)] border border-line bg-white p-3.5 transition-colors hover:border-brand hover:bg-brand-soft sm:p-4"
                   >
-                    <Initials name={rep.name} />
+                    <RepresentativeAvatar name={rep.name} imageUrl={rep.imageUrl} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-bold text-ink">{rep.name}</span>
                       <span className="block truncate text-sm text-brand">{rep.positionName ?? "Student representative"}</span>

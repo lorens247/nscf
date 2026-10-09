@@ -7,10 +7,10 @@ export default function SignOutButton() {
     <form action={signOutAction}>
       <button
         type="submit"
-        className="flex min-h-11 w-full items-center gap-3 rounded-[var(--radius-field)] px-3 text-left text-sm font-semibold text-muted transition-colors hover:bg-accent-soft hover:text-accent"
+        className="flex min-h-11 w-full items-center gap-3 rounded-[var(--radius-field)] border border-line-strong bg-white px-3 text-left text-sm font-semibold text-muted transition-colors hover:bg-accent-soft hover:text-accent"
       >
         <LogOut size={18} aria-hidden="true" />
-        Sign out
+        Log out
       </button>
     </form>
   );

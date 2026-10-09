@@ -16,7 +16,7 @@ const NAV = [
 export function SiteHeader({ inst }: { inst: InstitutionInfo }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur-sm">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6 lg:h-16">
+      <div className="mx-auto flex h-[108px] max-w-6xl items-center gap-3 px-4 sm:px-6 lg:h-[120px]">
         <Link href="/" className="flex min-w-0 items-center gap-2.5">
           <Logo logoUrl={inst.logoUrl} shortName={inst.shortName} />
           <span className="min-w-0 leading-tight">
@@ -31,9 +31,7 @@ export function SiteHeader({ inst }: { inst: InstitutionInfo }) {
               {item.label}
             </Link>
           ))}
-          <Link href="/admin" className="ml-2 rounded-[var(--radius-field)] border border-brand px-3.5 py-2 text-sm font-semibold text-brand transition-colors hover:bg-brand-soft">
-            Admin sign in
-          </Link>
+          <Link href="/representatives/join" className="ml-2 rounded-[var(--radius-field)] border border-brand px-3.5 py-2 text-sm font-semibold text-brand hover:bg-brand-soft">Rep registration</Link>
         </nav>
 
         <Link

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Logo } from "@/components/logo";
 import { Notice, buttonPrimary, inputClass } from "@/components/ui";
@@ -44,7 +45,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
         </div>
 
         <p className="mt-6 text-center text-xs leading-relaxed text-muted">Restricted to authorised staff. Every action is recorded in the audit log.</p>
-        <p className="mt-6 text-center"><a href="/directory" className="text-sm font-bold text-brand hover:underline">Return to the directory</a></p>
+        <p className="mt-6 text-center"><Link href="/directory" className="text-sm font-bold text-brand hover:underline">Return to the directory</Link></p>
       </div>
     </main>
   );

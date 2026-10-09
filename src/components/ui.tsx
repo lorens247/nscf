@@ -1,5 +1,11 @@
 import type { ReactNode } from "react";
 
+export function RepresentativeAvatar({ name, imageUrl }: { name: string; imageUrl: string | null }) {
+  if (!imageUrl) return <Initials name={name} />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={imageUrl} alt="" loading="lazy" className="h-11 w-11 shrink-0 rounded-full object-cover" />;
+}
+
 export function Initials({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg" }) {
   const initials = name
     .split(" ")

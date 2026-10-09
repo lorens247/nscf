@@ -7,6 +7,7 @@ import { db } from "@/db";
 import { representatives } from "@/db/schema";
 import { requireRole } from "@/lib/auth-guard";
 import { logAudit } from "@/lib/audit";
+import { departmentSelectionError } from "@/lib/department-selection";
 import { getInstitution } from "@/lib/institution";
 import type { FormState } from "@/lib/form-state";
 import { formValues, issuesToFieldErrors, representativeSchema } from "@/lib/validators";
@@ -48,6 +49,9 @@ export async function createRepresentative(_prev: FormState, formData: FormData)
     return { error: "Please correct the highlighted fields.", fieldErrors: issuesToFieldErrors(parsed.error), values };
   }
 
+  const departmentError = await departmentSelectionError(parsed.data.facultyId, parsed.data.departmentId);
+  if (departmentError) return { error: "Please correct the highlighted fields.", fieldErrors: { departmentId: departmentError }, values };
+
   const inst = await getInstitution();
   const [created] = await db
     .insert(representatives)
@@ -76,6 +80,9 @@ export async function updateRepresentative(_prev: FormState, formData: FormData)
   if (!parsed.success) {
     return { error: "Please correct the highlighted fields.", fieldErrors: issuesToFieldErrors(parsed.error), values };
   }
+
+  const departmentError = await departmentSelectionError(parsed.data.facultyId, parsed.data.departmentId);
+  if (departmentError) return { error: "Please correct the highlighted fields.", fieldErrors: { departmentId: departmentError }, values };
 
   const [before] = await db.select().from(representatives).where(eq(representatives.id, id)).limit(1);
   if (!before) return { error: "This representative no longer exists." };

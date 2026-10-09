@@ -4,7 +4,7 @@ import { Archive, ArchiveRestore, Eye, Pencil, Plus, Search } from "lucide-react
 import { db } from "@/db";
 import { departments, faculties, positions, representatives } from "@/db/schema";
 import { canWrite, requireRole } from "@/lib/auth-guard";
-import { Notice, PageHeading, buttonPrimary, buttonSecondary, inputClass, EmptyState, Initials } from "@/components/ui";
+import { Notice, PageHeading, buttonPrimary, buttonSecondary, inputClass, EmptyState, RepresentativeAvatar } from "@/components/ui";
 import { setArchived } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +35,7 @@ export default async function AdminRepresentatives({ searchParams }: { searchPar
     .select({
       id: representatives.id,
       name: representatives.name,
+      imageUrl: representatives.imageUrl,
       email: representatives.email,
       isArchived: representatives.isArchived,
       contactPublic: representatives.contactPublic,
@@ -69,6 +70,7 @@ export default async function AdminRepresentatives({ searchParams }: { searchPar
         actions={
           <>
             <Link href="/directory" className={buttonSecondary}>Public view</Link>
+            {editable && <Link href="/admin/invitations" className={buttonSecondary}>Generate rep code</Link>}
             {editable && (
               <Link href="/admin/representatives/new" className={buttonPrimary}>
                 <Plus size={16} aria-hidden="true" /> Add
@@ -113,7 +115,7 @@ export default async function AdminRepresentatives({ searchParams }: { searchPar
             {rows.map((r) => (
               <li key={r.id} className="rounded-[var(--radius-card)] border border-line bg-white p-4">
                 <div className="flex items-start gap-3">
-                  <Initials name={r.name} />
+                  <RepresentativeAvatar name={r.name} imageUrl={r.imageUrl} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <p className="truncate font-bold text-ink">{r.name}</p>

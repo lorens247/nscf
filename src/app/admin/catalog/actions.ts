@@ -31,6 +31,7 @@ function tabUrl(kind: string, extra: string) {
 /** Builds the raw object for a catalog form. Checkboxes need an explicit boolean. */
 function readCatalogForm(formData: FormData, kind: CatalogKind) {
   const v = formValues(formData);
+  if (kind === "programme") return { ...v, departmentId: "" };
   if (kind === "session") return { ...v, isActive: formData.get("isActive") === "on" };
   return v;
 }

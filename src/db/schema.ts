@@ -120,6 +120,23 @@ export const auditLogs = pgTable("audit_log", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const representativeInvites = pgTable("representative_invite", {
+  id: serial("id").primaryKey(),
+  codeHash: text("code_hash").notNull().unique(),
+  institutionId: integer("institution_id").notNull().references(() => institutions.id),
+  createdBy: integer("created_by").references(() => users.id),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
+  representativeId: integer("representative_id").references(() => representatives.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const representativePhotos = pgTable("representative_photo", {
+  representativeId: integer("representative_id").primaryKey().references(() => representatives.id, { onDelete: "cascade" }),
+  contentType: text("content_type").notNull(),
+  data: text("data").notNull(),
+});
+
 export const privacySettings = pgTable("privacy_setting", {
   id: serial("id").primaryKey(),
   key: text("key").notNull().unique(),
