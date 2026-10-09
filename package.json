@@ -1,0 +1,51 @@
+{
+  "name": "nscf-directory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A production-ready directory of student representatives for the National Open University of Nigeria. Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · PostgreSQL via Drizzle ORM · Auth.js credentials sign-in.",
+  "homepage": "https://github.com/lorens247/nscf#readme",
+  "bugs": {
+    "url": "https://github.com/lorens247/nscf/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lorens247/nscf.git"
+  },
+  "license": "ISC",
+  "author": "Lawrence Ikhidero",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "17.3.1",
+    "drizzle-orm": "0.45.2",
+    "lucide-react": "^1.53.0",
+    "next": "^16.4.0",
+    "next-auth": "^5.0.0-beta.32",
+    "pg": "8.20.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-qr-code": "^2.2.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.1.17",
+    "@types/node": "22.19.15",
+    "@types/pg": "8.18.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "drizzle-kit": "0.31.10",
+    "eslint": "9.39.4",
+    "eslint-config-next": "^16.4.0",
+    "postcss": "^8.5.29",
+    "tailwindcss": "4.1.17",
+    "typescript": "5.9.3"
+  }
+}
