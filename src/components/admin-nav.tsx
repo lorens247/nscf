@@ -57,7 +57,7 @@ function AdminMobileSheet({ items, identity }: { items: AdminNavItem[]; identity
   useSheetEffects(open, setOpen);
 
   return (
-    <div className="md:hidden">
+    <div className="admin-menu-toggle">
       <button
         type="button"
         onClick={() => setOpen(true)}

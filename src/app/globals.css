@@ -1,5 +1,34 @@
 @import "tailwindcss";
 
+:root {
+  --site-header-height: 112px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --site-header-height: 124px;
+  }
+}
+
+/* Keep admin navigation visible on desktop independently of utility generation. */
+.admin-sidebar {
+  display: none;
+}
+
+.admin-menu-toggle {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .admin-sidebar {
+    display: flex;
+  }
+
+  .admin-menu-toggle {
+    display: none;
+  }
+}
+
 /*
  * NOUN institutional palette.
  * Green is the primary, white the surface, red a restrained accent.

@@ -16,7 +16,7 @@ const NAV = [
 export function SiteHeader({ inst }: { inst: InstitutionInfo }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur-sm">
-      <div className="mx-auto flex h-[108px] max-w-6xl items-center gap-3 px-4 sm:px-6 lg:h-[120px]">
+      <div className="mx-auto flex h-[calc(var(--site-header-height)-4px)] max-w-6xl items-center gap-3 px-4 sm:px-6">
         <Link href="/" className="flex min-w-0 items-center gap-2.5">
           <Logo logoUrl={inst.logoUrl} shortName={inst.shortName} />
           <span className="min-w-0 leading-tight">

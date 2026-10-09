@@ -1,3 +1,4 @@
+import RepresentativeSearchInput from "@/components/representative-search-input";
 import Link from "next/link";
 import { ArrowRight, ChevronRight, Search } from "lucide-react";
 import { and, asc, count, desc, eq, sql } from "drizzle-orm";
@@ -64,12 +65,8 @@ export default async function HomePage() {
             <label htmlFor="q" className="sr-only">Search representatives</label>
             <div className="relative">
               <Search size={18} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
-              <input
-                id="q"
-                name="q"
-                type="search"
+              <RepresentativeSearchInput
                 placeholder="Name or email"
-                autoComplete="off"
                 className="h-[52px] w-full rounded-[var(--radius-card)] border-0 bg-white pl-11 pr-[124px] text-base text-ink shadow-sm placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-white/30"
               />
               <button type="submit" className="absolute right-1.5 top-1/2 h-[40px] -translate-y-1/2 rounded-[10px] bg-brand-ink px-4 text-sm font-bold text-white hover:bg-black/60">

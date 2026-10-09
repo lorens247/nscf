@@ -1,3 +1,4 @@
+import RepresentativeSearchInput from "@/components/representative-search-input";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { and, asc, count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
@@ -120,17 +121,13 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Pr
   return (
     <SiteLayout>
       {/* Sticky search: the primary mobile entry point stays reachable while scrolling */}
-      <div className="sticky top-[59px] z-30 border-b border-line bg-white/97 px-4 py-3 backdrop-blur sm:px-6 lg:top-16">
+      <div className="sticky top-[var(--site-header-height)] z-30 border-b border-line bg-white/97 px-4 py-3 backdrop-blur sm:px-6">
         <form method="GET" action="/directory" role="search" className="relative mx-auto max-w-3xl">
           <Search size={18} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
           <label htmlFor="q" className="sr-only">Search by name or email</label>
-          <input
-            id="q"
-            name="q"
-            type="search"
+          <RepresentativeSearchInput
             defaultValue={q}
             placeholder="Search representatives"
-            autoComplete="off"
             className="h-12 w-full rounded-[var(--radius-card)] border border-line-strong bg-white pl-11 pr-24 text-base text-ink placeholder:text-slate-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
           />
           <button type="submit" className="absolute right-2 top-1/2 h-9 -translate-y-1/2 rounded-[10px] bg-brand px-4 text-sm font-bold text-white hover:bg-brand-hover">

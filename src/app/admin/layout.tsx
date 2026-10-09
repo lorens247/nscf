@@ -46,7 +46,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         Skip to content
       </a>
 
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-white md:flex xl:w-72">
+      <aside aria-label="Admin sidebar" className="admin-sidebar sticky top-0 h-dvh w-64 shrink-0 flex-col border-r border-line bg-white xl:w-72">
         <div className="flex h-24 shrink-0 items-center gap-2.5 border-b border-line px-5">
           <Logo logoUrl={inst.logoUrl} shortName={inst.shortName} size="sm" />
           <div className="min-w-0">

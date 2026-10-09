@@ -164,3 +164,5 @@ References: [Coolify Dockerfile applications](https://coolify.io/docs/applicatio
 Admin navigation stays visible as a sidebar on tablet and desktop screens. On phones, the menu button opens a sidebar drawer. **Log out** is available in the admin header and pinned at the bottom of both sidebars; it clears the session and returns to `/admin/login`.
 
 Rep codes now use 10 uppercase letters/digits with ambiguous characters omitted. Existing 24-character codes remain valid until used, revoked, or expired. Bulk generation is transactional, retries hash collisions, and records an audit entry for every code. Each code remains single-use with seven-day expiry.
+
+Public representative search suggests up to eight active representative names from PostgreSQL after two characters, with a 250 ms debounce. Suggestions use the browser’s native accessible selection list; select a name and press Search. Archived representatives and contact details are not returned. Normal search remains available if suggestions cannot load.
