@@ -101,6 +101,7 @@ export const representatives = pgTable("representative", {
   academicSessionId: integer("academic_session_id").references(() => academicSessions.id),
   stateId: integer("state_id").references(() => states.id),
   bio: text("bio"),
+  level: integer("level"),
   contactPublic: boolean("contact_public").default(true).notNull(),
   isArchived: boolean("is_archived").default(false).notNull(),
   institutionId: integer("institution_id").references(() => institutions.id),

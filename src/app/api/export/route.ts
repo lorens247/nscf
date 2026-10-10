@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 const HEADERS = [
   "id", "name", "email", "phone", "bio", "image_url", "position", "faculty", "department", "programme",
-  "study_centre", "state", "academic_session", "contact_public", "is_archived",
+  "study_centre", "state", "academic_session", "contact_public", "is_archived", "level",
 ];
 
 /** Exports every representative (including archived) as CSV. Uses the same column names as the importer. */
@@ -25,6 +25,7 @@ export async function GET() {
       email: representatives.email,
       phone: representatives.phone,
       bio: representatives.bio,
+      level: representatives.level,
       imageUrl: representatives.imageUrl,
       contactPublic: representatives.contactPublic,
       isArchived: representatives.isArchived,
@@ -50,7 +51,7 @@ export async function GET() {
     HEADERS,
     ...rows.map((r) => [
       r.id, r.name, r.email, r.phone, r.bio, r.imageUrl, r.position, r.faculty, r.department, r.programme,
-      r.studyCentre, r.state, r.session, r.contactPublic, r.isArchived,
+      r.studyCentre, r.state, r.session, r.contactPublic, r.isArchived, r.level,
     ]),
   ]);
 

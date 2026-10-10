@@ -19,6 +19,7 @@ const COLUMNS = [
   ["study_centre", "Must match a catalog study centre"],
   ["state", "Must match a catalog state"],
   ["academic_session", "Must match a catalog session, e.g. 2025/2026"],
+  ["level", "Optional: 100, 200, 300, 400, 500, 600, 700, or 800"],
   ["contact_public", "true or false (default true)"],
   ["is_archived", "true or false (default false)"],
 ] as const;

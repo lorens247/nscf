@@ -18,13 +18,13 @@ const ICONS = {
 };
 
 /** Grouped menus shared by desktop navigation and the mobile drawer. */
-export function AdminNavList({ items, variant = "sidebar" }: { items: AdminNavItem[]; variant?: "sidebar" | "sheet" }) {
+export function AdminNavList({ items, variant = "sidebar", collapsed = false }: { items: AdminNavItem[]; variant?: "sidebar" | "sheet"; collapsed?: boolean }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const groups = [...new Set(items.map((item) => item.group ?? "Menu"))];
   return <div className="space-y-5">
     {groups.map((group) => <div key={group}>
-      <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">{group}</p>
+      {!collapsed && <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">{group}</p>}
       <ul className={variant === "sheet" ? "grid grid-cols-2 gap-2" : "space-y-1"}>
         {items.filter((item) => (item.group ?? "Menu") === group).map((item) => {
           const [path, query] = item.href.split("?");
@@ -35,9 +35,10 @@ export function AdminNavList({ items, variant = "sidebar" }: { items: AdminNavIt
           const Icon = ICONS[item.label as keyof typeof ICONS] ?? List;
           return <li key={item.href}>
             <Link href={item.href} aria-current={active ? "page" : undefined}
+              title={collapsed ? item.label : undefined}
               className={`flex min-h-11 items-center gap-3 rounded-[var(--radius-field)] px-3 py-2 text-sm font-semibold transition-colors ${active ? "bg-brand text-white" : "text-muted hover:bg-brand-soft hover:text-brand"}`}>
               <Icon size={18} className="shrink-0" aria-hidden="true" />
-              <span>{item.label}</span>
+              <span className={collapsed ? "sr-only" : undefined}>{item.label}</span>
             </Link>
           </li>;
         })}

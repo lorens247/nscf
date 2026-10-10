@@ -82,6 +82,8 @@ The build runs `next build`; `npm start` serves the production bundle. Point a r
 port 3000, set `NEXT_PUBLIC_SITE_URL` to the public origin, and ensure `AUTH_SECRET` is set so
 sessions survive restarts and work across instances.
 
+Representatives have an optional Level (100–800) on admin and self-registration forms. Apply the additive migration in `src/db/migrations/add-representative-level.sql` to an existing database before running the updated app, or use schema push below. Existing records keep an unassigned level.
+
 Migrations are applied with `npx drizzle-kit push` (or generate migration files with
 `npx drizzle-kit generate` for a reviewed, versioned history in CI).
 

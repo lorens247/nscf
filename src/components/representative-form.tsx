@@ -6,6 +6,7 @@ import { useActionState } from "react";
 import type { FormState } from "@/lib/form-state";
 import type { Option, DepartmentOption } from "@/lib/lookups";
 import FacultyDepartmentFields from "@/components/faculty-department-fields";
+import { REPRESENTATIVE_LEVELS } from "@/lib/representative-levels";
 import { Notice, buttonPrimary, buttonSecondary, inputClass } from "@/components/ui";
 
 export type Lookups = {
@@ -76,6 +77,7 @@ export default function RepresentativeForm({ action, lookups, defaults = {}, id,
           {lookups.sessions.length > 0 && <SelectField id="academicSessionId" label="Academic session" options={lookups.sessions} value={v("academicSessionId")} error={err("academicSessionId")} />}
           <FacultyDepartmentFields key={`${v("facultyId")}:${v("departmentId")}`} faculties={lookups.faculties} departments={lookups.departments} facultyValue={v("facultyId")} departmentValue={v("departmentId")} fieldErrors={state.fieldErrors} />
           <SelectField id="programmeId" label="Programme / degree type" options={lookups.programmes} value={v("programmeId")} error={err("programmeId")} />
+          <SelectField id="level" label="Level" options={REPRESENTATIVE_LEVELS.map((level) => ({ id: level, name: `${level} Level` }))} value={v("level")} error={err("level")} />
           {lookups.studyCentres.length > 0 && <SelectField id="studyCentreId" label="Study centre" options={lookups.studyCentres} value={v("studyCentreId")} error={err("studyCentreId")} />}
           {lookups.states.length > 0 && <SelectField id="stateId" label="State" options={lookups.states} value={v("stateId")} error={err("stateId")} />}
         </div>

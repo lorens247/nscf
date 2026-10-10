@@ -28,6 +28,7 @@ export default async function EditRepresentativePage({ params }: { params: Promi
     email: s(rep.email),
     phone: s(rep.phone),
     bio: s(rep.bio),
+    level: s(rep.level),
     imageUrl: s(rep.imageUrl),
     positionId: s(rep.positionId),
     facultyId: s(rep.facultyId),

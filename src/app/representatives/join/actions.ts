@@ -32,7 +32,7 @@ export async function submitRegistration(_state: FormState, formData: FormData):
   const hash = hashRegistrationCode(String(formData.get("code") ?? "").slice(0, 128));
   if (!hash) return { error: accessError, values };
   const parsed = representativeSchema.safeParse({
-    ...Object.fromEntries(["name", "email", "phone", "bio", "positionId", "facultyId", "departmentId", "programmeId", "studyCentreId", "academicSessionId", "stateId"].map((key) => [key, values[key] ?? ""])),
+    ...Object.fromEntries(["name", "email", "phone", "bio", "level", "positionId", "facultyId", "departmentId", "programmeId", "studyCentreId", "academicSessionId", "stateId"].map((key) => [key, values[key] ?? ""])),
     imageUrl: "",
     contactPublic: formData.get("contactPublic") === "on",
   });

@@ -13,6 +13,17 @@
 /* Keep admin navigation visible on desktop independently of utility generation. */
 .admin-sidebar {
   display: none;
+  width: 16rem;
+}
+
+.admin-sidebar[data-collapsed="true"] {
+  width: 4.5rem;
+}
+
+@media (min-width: 1280px) {
+  .admin-sidebar[data-collapsed="false"] {
+    width: 18rem;
+  }
 }
 
 .admin-menu-toggle {

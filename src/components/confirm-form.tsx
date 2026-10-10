@@ -16,11 +16,11 @@ export default function ConfirmForm({
 }) {
   return (
     <form
-      action={action}
-      className={className}
-      onSubmit={(event) => {
-        if (!window.confirm(message)) event.preventDefault();
+      action={async (formData) => {
+        if (!window.confirm(message)) return;
+        await action(formData);
       }}
+      className={className}
     >
       {children}
     </form>

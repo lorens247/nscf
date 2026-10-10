@@ -3,9 +3,10 @@ import { and, count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
 import { Archive, ArchiveRestore, Eye, Pencil, Plus, Search } from "lucide-react";
 import { db } from "@/db";
 import { departments, faculties, positions, representatives } from "@/db/schema";
-import { canWrite, requireRole } from "@/lib/auth-guard";
+import { canWrite, isAdmin, requireRole } from "@/lib/auth-guard";
 import { Notice, PageHeading, buttonPrimary, buttonSecondary, inputClass, EmptyState, RepresentativeAvatar } from "@/components/ui";
 import { setArchived } from "./actions";
+import DeleteRepresentativeButton from "./delete-button";
 
 export const dynamic = "force-dynamic";
 
@@ -110,8 +111,8 @@ export default async function AdminRepresentatives({ searchParams }: { searchPar
         <EmptyState text="Nothing matches these filters.">{editable && <Link href="/admin/representatives/new" className={buttonPrimary}>Add a representative</Link>}</EmptyState>
       ) : (
         <>
-          {/* Phones and tablets: rows with a visible primary action */}
-          <ul className="space-y-2 lg:hidden">
+          {/* One list at every screen width keeps records and actions visible. */}
+          <ul aria-label="Representatives" className="space-y-3">
             {rows.map((r) => (
               <li key={r.id} className="rounded-[var(--radius-card)] border border-line bg-white p-4">
                 <div className="flex items-start gap-3">
@@ -126,64 +127,23 @@ export default async function AdminRepresentatives({ searchParams }: { searchPar
                     <p className="mt-1 truncate text-xs text-muted">{r.email ?? "No email"} · {r.contactPublic ? "contact public" : "contact private"}</p>
                   </div>
                 </div>
-                <div className="mt-3 flex gap-2 border-t border-line pt-3">
-                  <Link href={`/directory/${r.id}`} className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-field)] border border-line-strong text-sm font-bold text-ink">
+                <div className="mt-3 flex flex-wrap gap-2 border-t border-line pt-3 sm:justify-end">
+                  <Link href={`/admin/representatives/${r.id}`} className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-field)] border border-line-strong px-3 text-sm font-bold text-ink sm:flex-none">
                     <Eye size={15} aria-hidden="true" /> View
                   </Link>
                   {editable && (
-                    <Link href={`/admin/representatives/${r.id}/edit`} className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-field)] bg-brand text-sm font-bold text-white">
+                    <Link href={`/admin/representatives/${r.id}/edit`} className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-field)] bg-brand px-3 text-sm font-bold text-white sm:flex-none">
                       <Pencil size={15} aria-hidden="true" /> Edit
                     </Link>
                   )}
                   {editable && <ArchiveButton id={r.id} archived={r.isArchived} />}
+                  {isAdmin(user.role) && <DeleteRepresentativeButton id={r.id} name={r.name} />}
                 </div>
               </li>
             ))}
           </ul>
 
-          {/* Desktop: dense table */}
-          <div className="hidden overflow-hidden rounded-[var(--radius-card)] border border-line bg-white lg:block">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-line bg-tint text-[11px] uppercase tracking-[0.06em] text-muted">
-                <tr>
-                  <th scope="col" className="px-4 py-3 font-bold">Name</th>
-                  <th scope="col" className="px-4 py-3 font-bold">Position</th>
-                  <th scope="col" className="px-4 py-3 font-bold">Faculty / department</th>
-                  <th scope="col" className="px-4 py-3 font-bold">Contact</th>
-                  <th scope="col" className="px-4 py-3 font-bold">Status</th>
-                  <th scope="col" className="px-4 py-3 text-right font-bold"><span className="sr-only">Actions</span></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                {rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-brand-soft/40">
-                    <td className="px-4 py-3">
-                      <span className="font-bold text-ink">{r.name}</span>
-                      <span className="block text-xs text-muted">{r.email ?? "No email"}</span>
-                    </td>
-                    <td className="px-4 py-3 text-ink">{r.positionName ?? "—"}</td>
-                    <td className="px-4 py-3 text-ink">
-                      {r.facultyName ?? "—"}
-                      <span className="block text-xs text-muted">{r.departmentName ?? ""}</span>
-                    </td>
-                    <td className="px-4 py-3 text-muted">{r.contactPublic ? "Public" : "Private"}</td>
-                    <td className="px-4 py-3"><StatusPill archived={r.isArchived} /></td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-1">
-                        <Link href={`/directory/${r.id}`} aria-label={`View ${r.name}`} className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-field)] text-muted hover:bg-tint hover:text-ink"><Eye size={16} aria-hidden="true" /></Link>
-                        {editable && (
-                          <>
-                            <Link href={`/admin/representatives/${r.id}/edit`} aria-label={`Edit ${r.name}`} className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-field)] text-muted hover:bg-tint hover:text-brand"><Pencil size={16} aria-hidden="true" /></Link>
-                            <ArchiveButton id={r.id} archived={r.isArchived} iconOnly name={r.name} />
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+
         </>
       )}
 
@@ -218,12 +178,12 @@ function ArchiveButton({ id, archived, iconOnly, name }: { id: number; archived:
         aria-label={iconOnly ? `${label} ${name ?? "record"}` : undefined}
         className={
           iconOnly
-            ? "flex h-10 w-10 items-center justify-center rounded-[var(--radius-field)] text-muted hover:bg-tint hover:text-ink"
+            ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-field)] border border-line-strong text-muted hover:bg-tint hover:text-ink"
             : "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-field)] border border-line-strong text-muted hover:text-ink sm:w-auto sm:gap-1.5 sm:px-3 sm:text-sm sm:font-bold"
         }
       >
         <Icon size={16} aria-hidden="true" />
-        <span className="hidden sm:inline">{label}</span>
+        {!iconOnly && <span className="hidden sm:inline">{label}</span>}
       </button>
     </form>
   );

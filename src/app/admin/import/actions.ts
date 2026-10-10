@@ -87,6 +87,7 @@ export async function importRepresentatives(formData: FormData) {
       email: rec.email ?? "",
       phone: rec.phone ?? "",
       bio: rec.bio ?? "",
+      level: rec.level ?? "",
       imageUrl: rec.image_url ?? "",
       positionId: refs.positionId && "id" in refs.positionId ? refs.positionId.id : "",
       facultyId: refs.facultyId && "id" in refs.facultyId ? refs.facultyId.id : "",

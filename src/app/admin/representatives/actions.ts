@@ -21,6 +21,7 @@ function readRepresentativeForm(formData: FormData) {
     email: v.email ?? "",
     phone: v.phone ?? "",
     bio: v.bio ?? "",
+    level: v.level ?? "",
     imageUrl: v.imageUrl ?? "",
     positionId: v.positionId ?? "",
     facultyId: v.facultyId ?? "",
@@ -37,7 +38,11 @@ function revalidateDirectory(id?: number) {
   revalidatePath("/directory");
   revalidatePath("/");
   revalidatePath("/admin/representatives");
-  if (id) revalidatePath(`/directory/${id}`);
+  if (id) {
+    revalidatePath(`/directory/${id}`);
+    revalidatePath(`/admin/representatives/${id}`);
+    revalidatePath(`/admin/representatives/${id}/edit`);
+  }
 }
 
 export async function createRepresentative(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -134,15 +139,18 @@ export async function deleteRepresentative(formData: FormData) {
   const id = Number(formData.get("id"));
   if (!Number.isInteger(id) || id <= 0) return;
 
-  const [before] = await db.select({ name: representatives.name }).from(representatives).where(eq(representatives.id, id)).limit(1);
-  await db.delete(representatives).where(eq(representatives.id, id));
+  const [deleted] = await db.delete(representatives).where(eq(representatives.id, id)).returning({ name: representatives.name });
+  if (!deleted) {
+    revalidateDirectory(id);
+    redirect("/admin/representatives");
+  }
 
   await logAudit({
     userId: user.id,
     action: "delete",
     entity: "representative",
     entityId: id,
-    details: { name: before?.name ?? null },
+    details: { name: deleted.name },
   });
 
   revalidateDirectory(id);

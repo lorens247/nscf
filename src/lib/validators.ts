@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { REPRESENTATIVE_LEVELS } from "./representative-levels";
 
 const text = (max: number) =>
   z
@@ -40,6 +41,9 @@ export const representativeSchema = z.object({
   email: optionalEmail,
   phone: text(30),
   bio: text(1000),
+  level: z.string().trim().default("")
+    .transform((value) => value === "" ? null : Number(value))
+    .refine((value) => value === null || REPRESENTATIVE_LEVELS.some((level) => level === value), "Choose a valid level"),
   imageUrl: optionalUrl,
   positionId: optionalId,
   facultyId: optionalId,
